@@ -10,6 +10,9 @@ import (
 )
 
 func main() {
+
+	//
+	// setup schema
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
 		Query:    graph.FormQueries,
 		Mutation: graph.CreateFormMutation,
@@ -23,6 +26,8 @@ func main() {
 		GraphiQL: true,
 	})
 
+	//
+	// setup database
 	s := http.NewServeMux()
 	s.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)

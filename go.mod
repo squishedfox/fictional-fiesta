@@ -11,3 +11,5 @@ require (
 )
 
 replace github.com/squishedfox/fictional-fiesta/db => ./db
+
+replace github.com/squishedfox/fictional-fiesta/db/psql => ./db/psqql
