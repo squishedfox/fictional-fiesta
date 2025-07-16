@@ -9,3 +9,5 @@ require (
 	github.com/graphql-go/handler v0.2.4
 	github.com/squishedfox/fictional-fiesta/graph v0.0.0-20250716153411-243c3f1b2077
 )
+
+replace github.com/squishedfox/fictional-fiesta/db => ./db
