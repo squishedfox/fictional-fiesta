@@ -1,11 +1,8 @@
-module github.com/squishedfox/fictional-fiesta/graph
+module github.com/squishedfox/fictional-fiest/mongodb
 
 go 1.24.3
 
-require (
-	github.com/graphql-go/graphql v0.8.1
-	go.mongodb.org/mongo-driver/v2 v2.2.2
-)
+require go.mongodb.org/mongo-driver/v2 v2.2.2
 
 require (
 	github.com/golang/snappy v1.0.0 // indirect
@@ -18,3 +15,5 @@ require (
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 )
+
+replace github.com/squishedfox/fictional-fiesta/db => ../
