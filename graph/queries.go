@@ -2,12 +2,13 @@ package graph
 
 import (
 	"log"
-	"reflect"
 
 	"github.com/graphql-go/graphql"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+
+	"github.com/squishedfox/fictional-fiesta/db"
 )
 
 type (
@@ -41,23 +42,28 @@ var (
 						Type:         graphql.Int,
 					},
 				},
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					client := p.Context.Value(ContextKey).(*mongo.Client)
-					if client == nil {
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					// don't need a transaction for read only session
+					session := p.Context.Value(ContextKey).(*mongo.Session)
+					if session == nil {
 						log.Fatal("could not find database driver")
 					}
 
-					opts := options.Find().SetLimit()
-					limit := p.Args["limit"]
-					if reflect.TypeOf(limit).Kind() == reflect.Int {
-						opts = opts.SetLimit(int64(limit.(int)))
-					}
-					page := p.Args["page"]
-					database := client.Database("database", options.Database())
+					database := session.Client().Database("forms", options.Database())
 					collection := database.Collection("forms", options.Collection())
 					filter := bson.D{}
+
+					forms := make([]db.FormModel, 0)
 					results, err := collection.Find(p.Context, filter)
-					return nil, nil
+					if err != nil {
+						return nil, err
+					}
+
+					if err := results.All(p.Context, &forms); err != nil {
+						return nil, err
+					}
+					log.Printf("Forms = %s", forms)
+					return forms, nil
 				},
 			},
 		},
