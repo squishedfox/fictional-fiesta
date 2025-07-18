@@ -1,31 +1,29 @@
 package graph
 
 import (
-	"log"
+	"errors"
 
 	"github.com/graphql-go/graphql"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
-
 	"github.com/squishedfox/fictional-fiesta/db"
 )
 
-type (
-	DbContextKey string
-)
-
 var (
-	ContextKey  DbContextKey = "DbContext"
-	FormQueries              = graphql.NewObject(graphql.ObjectConfig{
+	FormQueries = graphql.NewObject(graphql.ObjectConfig{
 		Name: "FormsQueries",
 		Fields: graphql.Fields{
 			"forms": &graphql.Field{
-				Type: graphql.NewList(FormObject),
+				Type: graphql.NewObject(graphql.ObjectConfig{
+					Name: "FormList",
+					Fields: graphql.Fields{
+						"forms": &graphql.Field{
+							Type: graphql.NewList(FormObject),
+						},
+					},
+				}),
 				Args: graphql.FieldConfigArgument{
 					"id": &graphql.ArgumentConfig{
 						DefaultValue: "",
-						Type:         graphql.ID,
+						Type:         graphql.String,
 					},
 					"name": &graphql.ArgumentConfig{
 						DefaultValue: "",
@@ -43,27 +41,11 @@ var (
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (any, error) {
-					// don't need a transaction for read only session
-					session := p.Context.Value(ContextKey).(*mongo.Session)
-					if session == nil {
-						log.Fatal("could not find database driver")
+					repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)
+					if repository == nil {
+						return nil, errors.New("Could not fetch repository from user context")
 					}
-
-					database := session.Client().Database("forms", options.Database())
-					collection := database.Collection("forms", options.Collection())
-					filter := bson.D{}
-
-					forms := make([]db.FormModel, 0)
-					results, err := collection.Find(p.Context, filter)
-					if err != nil {
-						return nil, err
-					}
-
-					if err := results.All(p.Context, &forms); err != nil {
-						return nil, err
-					}
-					log.Printf("Forms = %s", forms)
-					return forms, nil
+					return repository.GetForms(&db.GetFormsModel{})
 				},
 			},
 		},

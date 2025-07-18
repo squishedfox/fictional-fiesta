@@ -17,7 +17,7 @@ A proof of concept HTML Form Builder created using Golang, GraphQL, and MongoDB
 ### Setup MongoDB Database
 
 1. make sure you have docker installed
-2. run `echo "MONGO_DB_URL=mongodb://root:example@0.0.0.0:27017/\
+2. run `echo "MONGO_DB_URL=mongodb://root:example@0.0.0.0:27017/\n
     DATABASE_NAME=forms" > .env`
 3. run `docker compose up -d` to start mongodb server locally
 

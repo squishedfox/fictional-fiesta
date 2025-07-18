@@ -9,6 +9,8 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	"github.com/joho/godotenv"
+	"github.com/squishedfox/fictional-fiesta/db"
+	"github.com/squishedfox/fictional-fiesta/db/mongodb"
 	"github.com/squishedfox/fictional-fiesta/graph"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -69,7 +71,8 @@ func main() {
 		}
 
 		defer userSession.EndSession(r.Context())
-		userContext := context.WithValue(r.Context(), graph.ContextKey, userSession)
+		formsRepo := mongodb.NewFormRepository(r.Context(), userSession)
+		userContext := context.WithValue(r.Context(), db.FormsRepositoryContextKey, formsRepo)
 
 		h.ContextHandler(userContext, w, r)
 	}))
