@@ -36,6 +36,11 @@ type (
 		// OrderBy is a highly recommended field to ensure your sorting occurs as it should
 		OrderBy []string
 	}
+
+	CreateFormModel struct {
+		// Name is the user friendly name of the form
+		Name string
+	}
 )
 
 var (

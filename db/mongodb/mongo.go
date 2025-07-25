@@ -18,6 +18,30 @@ type (
 	}
 )
 
+// CreateForm implements db.FormsRepository.
+func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
+
+	err := r.session.StartTransaction()
+	if err != nil {
+		return nil, err
+	}
+	database := r.session.Client().Database("fictional-fiesta", options.Database())
+	collection := database.Collection("forms", options.Collection())
+
+	document := bson.M{
+		"name": model.Name,
+	}
+	result, err := collection.InsertOne(r.context, document)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.session.CommitTransaction(r.context); err != nil {
+		return nil, err
+	}
+	return result.InsertedID, nil
+}
+
 func NewFormRepository(ctx context.Context, session *mongo.Session) db.FormsRepository {
 	return &formRepository{
 		context:        ctx,

@@ -6,6 +6,7 @@ type (
 	FormsRepository interface {
 		// GetForms filters and fetches forms
 		GetForms(model *GetFormsModel) (*FormsModel, error)
+		CreateForm(model *CreateFormModel) (any, error)
 	}
 )
 
