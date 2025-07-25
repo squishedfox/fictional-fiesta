@@ -39,7 +39,7 @@ func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
 	if err := r.session.CommitTransaction(r.context); err != nil {
 		return nil, err
 	}
-	return result.InsertedID, nil
+	return result.InsertedID.(bson.ObjectID).Hex(), nil
 }
 
 func NewFormRepository(ctx context.Context, session *mongo.Session) db.FormsRepository {
@@ -68,10 +68,15 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 		}
 	}()
 	for cursor.Next(r.context) {
-		form := &db.FormsModel{}
+		form := bson.M{}
 		if err := cursor.Decode(&form); err != nil {
 			return nil, err
 		}
+
+		forms = append(forms, &db.FormModel{
+			ID:   form["_id"].(bson.ObjectID).Hex(),
+			Name: form["name"].(string),
+		})
 	}
 	return &db.FormsModel{
 		Forms: forms,
