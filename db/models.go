@@ -32,9 +32,9 @@ type (
 		// Name (Optional) is the form name to search for
 		Filters []*SearchFieldFilter
 		// Limit should be the number of recrods that should be limited to the results for returning
-		Limit int
+		Limit int64
 		// Skip is the number of records to skip over before fetching more records
-		Skip int
+		Skip int64
 		// OrderBy is a highly recommended field to ensure your sorting occurs as it should
 		OrderBy []string
 	}

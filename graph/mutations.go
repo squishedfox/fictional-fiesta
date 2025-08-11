@@ -24,7 +24,6 @@ var (
 				Type:        IDObject,
 				Resolve: func(p graphql.ResolveParams) (any, error) {
 					name := p.Args["name"].(string)
-
 					repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)
 					if repository == nil {
 						return nil, errors.New("Could not fetch repository from user context")

@@ -25,10 +25,10 @@ func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
 	}
 	database := r.session.Client().Database("fictional-fiesta", options.Database())
 	collection := database.Collection("forms", options.Collection())
-	result, err := collection.InsertOne(r.context, bson.M{
+	document := bson.M{
 		"name": model.Name,
-	}, options.InsertOne())
-
+	}
+	result, err := collection.InsertOne(r.context, document)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,6 @@ func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
 	if err := r.session.CommitTransaction(r.context); err != nil {
 		return nil, err
 	}
-
 	return result.InsertedID.(bson.ObjectID).Hex(), nil
 }
 
@@ -74,7 +73,6 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 			ID:   bsonForm["_id"].(bson.ObjectID).Hex(),
 			Name: bsonForm["name"].(string),
 		}
-		log.Println(form)
 		forms = append(forms, &form)
 	}
 	count, err := collection.CountDocuments(r.context, filter)
