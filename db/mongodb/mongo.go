@@ -18,6 +18,28 @@ type (
 	}
 )
 
+// CreateForm implements db.FormsRepository.
+func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
+	if err := r.session.StartTransaction(); err != nil {
+		return nil, err
+	}
+	database := r.session.Client().Database("fictional-fiesta", options.Database())
+	collection := database.Collection("forms", options.Collection())
+	result, err := collection.InsertOne(r.context, bson.M{
+		"name": model.Name,
+	}, options.InsertOne())
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := r.session.CommitTransaction(r.context); err != nil {
+		return nil, err
+	}
+
+	return result.InsertedID.(bson.ObjectID).Hex(), nil
+}
+
 func NewFormRepository(ctx context.Context, session *mongo.Session) db.FormsRepository {
 	return &formRepository{
 		context:        ctx,
@@ -44,12 +66,23 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 		}
 	}()
 	for cursor.Next(r.context) {
-		form := &db.FormsModel{}
-		if err := cursor.Decode(&form); err != nil {
+		bsonForm := bson.M{}
+		if err := cursor.Decode(&bsonForm); err != nil {
 			return nil, err
 		}
+		form := db.FormModel{
+			ID:   bsonForm["_id"].(bson.ObjectID).Hex(),
+			Name: bsonForm["name"].(string),
+		}
+		log.Println(form)
+		forms = append(forms, &form)
+	}
+	count, err := collection.CountDocuments(r.context, filter)
+	if err != nil {
+		return nil, err
 	}
 	return &db.FormsModel{
 		Forms: forms,
+		Count: count,
 	}, nil
 }

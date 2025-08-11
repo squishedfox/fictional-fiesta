@@ -15,8 +15,11 @@ var (
 				Type: graphql.NewObject(graphql.ObjectConfig{
 					Name: "FormList",
 					Fields: graphql.Fields{
-						"forms": &graphql.Field{
+						"list": &graphql.Field{
 							Type: graphql.NewList(FormObject),
+						},
+						"count": &graphql.Field{
+							Type: graphql.Int,
 						},
 					},
 				}),
@@ -45,7 +48,14 @@ var (
 					if repository == nil {
 						return nil, errors.New("Could not fetch repository from user context")
 					}
-					return repository.GetForms(&db.GetFormsModel{})
+					result, err := repository.GetForms(&db.GetFormsModel{})
+					if err != nil {
+						return nil, err
+					}
+					return &struct {
+						List  []*db.FormModel `json:"list"`
+						Count int64           `json:"count"`
+					}{result.Forms, result.Count}, nil
 				},
 			},
 		},

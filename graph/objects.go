@@ -5,12 +5,21 @@ import (
 )
 
 var (
+	IDObject = graphql.NewObject(graphql.ObjectConfig{
+		Name:        "ID",
+		Description: "Hex string identifier of a record",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+		},
+	})
 	FormObject = graphql.NewObject(graphql.ObjectConfig{
 		Name:        "Form",
 		Description: "Dynamic Form with groups or fields",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.ID),
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),

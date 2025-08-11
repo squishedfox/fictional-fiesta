@@ -1,7 +1,10 @@
 package graph
 
 import (
+	"errors"
+
 	"github.com/graphql-go/graphql"
+	"github.com/squishedfox/fictional-fiesta/db"
 )
 
 var (
@@ -18,7 +21,26 @@ var (
 			"create": &graphql.Field{
 				Args:        CreateNewFormArguments,
 				Description: "Create a new form",
-				Type:        FormObject,
+				Type:        IDObject,
+				Resolve: func(p graphql.ResolveParams) (any, error) {
+					name := p.Args["name"].(string)
+
+					repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)
+					if repository == nil {
+						return nil, errors.New("Could not fetch repository from user context")
+					}
+
+					id, err := repository.CreateForm(&db.CreateFormModel{
+						Name: name,
+					})
+					if err != nil {
+						return nil, err
+					}
+
+					return &struct {
+						ID any `json:"id"`
+					}{id}, err
+				},
 			},
 		},
 	})

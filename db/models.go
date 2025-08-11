@@ -23,6 +23,8 @@ type (
 	// FormsModel is the model returned when there is a search being performed for one or many different forms
 	FormsModel struct {
 		Forms []*FormModel
+		// Total number of records in the query but were not returned in the results
+		Count int64
 	}
 
 	// GetFormsModel is a request object for fetching and filtering form data
@@ -35,6 +37,11 @@ type (
 		Skip int
 		// OrderBy is a highly recommended field to ensure your sorting occurs as it should
 		OrderBy []string
+	}
+
+	CreateFormModel struct {
+		// Name is the user friendly name of the form
+		Name string `json:"name"`
 	}
 )
 
