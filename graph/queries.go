@@ -11,11 +11,11 @@ var (
 	FormQueries = graphql.NewObject(graphql.ObjectConfig{
 		Name: "FormsQueries",
 		Fields: graphql.Fields{
-			"forms": &graphql.Field{
+			"list": &graphql.Field{
 				Type: graphql.NewObject(graphql.ObjectConfig{
 					Name: "FormList",
 					Fields: graphql.Fields{
-						"list": &graphql.Field{
+						"forms": &graphql.Field{
 							Type: graphql.NewList(FormObject),
 						},
 						"count": &graphql.Field{
