@@ -21,29 +21,24 @@ var (
 			"create": &graphql.Field{
 				Args:        CreateNewFormArguments,
 				Description: "Create a new form",
-				Type: graphql.NewObject(graphql.ObjectConfig{
-					Name: "CreateNewformResponseType",
-					Fields: graphql.Fields{
-						"id": &graphql.Field{
-							Name: "IDType",
-							Type: graphql.String,
-						},
-					},
-				}),
+				Type:        IDObject,
 				Resolve: func(p graphql.ResolveParams) (any, error) {
+					name := p.Args["name"].(string)
 					repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)
 					if repository == nil {
 						return nil, errors.New("Could not fetch repository from user context")
 					}
-					model := &db.CreateFormModel{
-						Name: p.Args["name"].(string),
+
+					id, err := repository.CreateForm(&db.CreateFormModel{
+						Name: name,
+					})
+					if err != nil {
+						return nil, err
 					}
-					id, err := repository.CreateForm(model)
-					return struct {
+
+					return &struct {
 						ID any `json:"id"`
-					}{
-						id,
-					}, err
+					}{id}, err
 				},
 			},
 		},

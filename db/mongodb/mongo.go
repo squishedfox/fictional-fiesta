@@ -20,14 +20,11 @@ type (
 
 // CreateForm implements db.FormsRepository.
 func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
-
-	err := r.session.StartTransaction()
-	if err != nil {
+	if err := r.session.StartTransaction(); err != nil {
 		return nil, err
 	}
 	database := r.session.Client().Database("fictional-fiesta", options.Database())
 	collection := database.Collection("forms", options.Collection())
-
 	document := bson.M{
 		"name": model.Name,
 	}
@@ -68,17 +65,22 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 		}
 	}()
 	for cursor.Next(r.context) {
-		form := bson.M{}
-		if err := cursor.Decode(&form); err != nil {
+		bsonForm := bson.M{}
+		if err := cursor.Decode(&bsonForm); err != nil {
 			return nil, err
 		}
-
-		forms = append(forms, &db.FormModel{
-			ID:   form["_id"].(bson.ObjectID).Hex(),
-			Name: form["name"].(string),
-		})
+		form := db.FormModel{
+			ID:   bsonForm["_id"].(bson.ObjectID).Hex(),
+			Name: bsonForm["name"].(string),
+		}
+		forms = append(forms, &form)
+	}
+	count, err := collection.CountDocuments(r.context, filter)
+	if err != nil {
+		return nil, err
 	}
 	return &db.FormsModel{
 		Forms: forms,
+		Count: count,
 	}, nil
 }
