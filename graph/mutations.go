@@ -13,6 +13,10 @@ var (
 			Type:        graphql.NewNonNull(graphql.String),
 			Description: "A unique human readable name for the form",
 		},
+		"active": &graphql.ArgumentConfig{
+			Type:        graphql.NewNonNull(graphql.Boolean),
+			Description: "Whether the form is active or usable",
+		},
 	}
 	CreateFormMutation = graphql.NewObject(graphql.ObjectConfig{
 		Name:        "CreateFormMutation",
