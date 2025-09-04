@@ -37,7 +37,7 @@ var (
 		},
 		"fieldset": &graphql.ArgumentConfig{
 			Type: graphql.NewInputObject(graphql.InputObjectConfig{
-				Name: "FieldSetArguments",
+				Name: "FieldSetInput",
 				Fields: graphql.InputObjectConfigFieldMap{
 					"label": &LabelInputConfig,
 					"inputs": &graphql.InputObjectFieldConfig{
