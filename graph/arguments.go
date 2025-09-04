@@ -19,10 +19,40 @@ var (
 				DefaultValue: "text",
 				Description:  "The type of input the user will see such as phone, email, calendar, select, text, etc.",
 			},
+			"minLength": &graphql.InputObjectFieldConfig{
+				Type:         graphql.Int,
+				DefaultValue: nil,
+				Description:  "The minimum number of characters required for the field. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#maxlength for valid input types",
+			},
+			"maxLength": &graphql.InputObjectFieldConfig{
+				Type:         graphql.Int,
+				DefaultValue: nil,
+				Description:  "The maximum number of characters required for the field. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#maxlength for valid input types",
+			},
+			"min": &graphql.InputObjectFieldConfig{
+				Type:         graphql.NewNonNull(graphql.String),
+				DefaultValue: nil,
+				Description:  "Minimum value that can be applied to the input. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/min for valid input types",
+			},
+			"max": &graphql.InputObjectFieldConfig{
+				Type:         graphql.NewNonNull(graphql.String),
+				DefaultValue: nil,
+				Description:  "Maximum value that can be applied to the input. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/max for valid input types",
+			},
 			"required": &graphql.InputObjectFieldConfig{
 				Type:         graphql.Boolean,
 				DefaultValue: false,
 				Description:  "True if the field is required to be filled out, else false",
+			},
+			"list": &graphql.InputObjectFieldConfig{
+				Type:         graphql.NewList(graphql.String),
+				Description:  "List of selectable options. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#list for valid input types",
+				DefaultValue: []string{},
+			},
+			"multiple": &graphql.InputObjectFieldConfig{
+				Type:         graphql.Boolean,
+				Description:  "Flag indicating that a user can select multiple values for a input field. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/multiple for valid input types",
+				DefaultValue: false,
 			},
 		},
 	})
@@ -41,7 +71,9 @@ var (
 				Fields: graphql.InputObjectConfigFieldMap{
 					"label": &LabelInputConfig,
 					"inputs": &graphql.InputObjectFieldConfig{
-						Type: graphql.NewList(FieldSetInputInputConfig),
+						Type:         graphql.NewList(FieldSetInputInputConfig),
+						Description:  "Input Field Configurations",
+						DefaultValue: nil,
 					},
 				},
 			}),
