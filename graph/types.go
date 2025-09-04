@@ -1,0 +1,15 @@
+package graph
+
+import "github.com/graphql-go/graphql"
+
+var (
+	IDObject = graphql.NewObject(graphql.ObjectConfig{
+		Name:        "ID",
+		Description: "Hex string identifier of a record",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+		},
+	})
+)
