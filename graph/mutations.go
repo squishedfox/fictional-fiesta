@@ -15,7 +15,14 @@ var (
 			"create": &graphql.Field{
 				Args:        CreateNewFormArgument,
 				Description: "Create a new form",
-				Type:        IDObject,
+				Type: graphql.NewObject(graphql.ObjectConfig{
+					Name: "CreateNewFormResponse",
+					Fields: graphql.Fields{
+						"id": &graphql.Field{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+				}),
 				Resolve: func(p graphql.ResolveParams) (any, error) {
 					name := p.Args["name"].(string)
 					repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)

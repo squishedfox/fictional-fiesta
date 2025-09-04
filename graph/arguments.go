@@ -30,12 +30,12 @@ var (
 				Description:  "The maximum number of characters required for the field. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input#maxlength for valid input types",
 			},
 			"min": &graphql.InputObjectFieldConfig{
-				Type:         graphql.NewNonNull(graphql.String),
+				Type:         graphql.String,
 				DefaultValue: nil,
 				Description:  "Minimum value that can be applied to the input. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/min for valid input types",
 			},
 			"max": &graphql.InputObjectFieldConfig{
-				Type:         graphql.NewNonNull(graphql.String),
+				Type:         graphql.String,
 				DefaultValue: nil,
 				Description:  "Maximum value that can be applied to the input. See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/max for valid input types",
 			},
