@@ -65,19 +65,22 @@ var (
 			Type:        graphql.NewNonNull(graphql.Boolean),
 			Description: "Whether the form is active or usable",
 		},
-		"fieldset": &graphql.ArgumentConfig{
-			Type: graphql.NewInputObject(graphql.InputObjectConfig{
-				Name: "FieldSetInput",
+		"fieldsets": &graphql.ArgumentConfig{
+			Type: graphql.NewList(graphql.NewInputObject(graphql.InputObjectConfig{
+				Name:        "FieldSetInput",
+				Description: "Field set to naturally group a number of input fields such as physical mailing address",
 				Fields: graphql.InputObjectConfigFieldMap{
-					"label": &LabelInputConfig,
+					"legend": &graphql.InputObjectFieldConfig{
+						Type:         graphql.String,
+						DefaultValue: "Provides a description for the form input grouping",
+					},
 					"inputs": &graphql.InputObjectFieldConfig{
 						Type:         graphql.NewList(FieldSetInputInputConfig),
 						Description:  "Input Field Configurations",
 						DefaultValue: nil,
 					},
 				},
-			}),
-			Description: "Field set to naturally group a number of input fields such as physical mailing address",
+			})),
 		},
 	}
 )

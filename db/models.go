@@ -39,9 +39,29 @@ type (
 		OrderBy []string
 	}
 
+	FormInputModel struct {
+		Label     string `json:"label"`
+		Type      string `json:"inputType"`
+		MinLength *int   `json:"minLength"`
+		MaxLength *int   `json:"maxLength"`
+		Min       string `json:"min"`
+		Max       string `json:"max"`
+		Required  bool   `json:"required"`
+		Multiple  bool   `json:"multiple"`
+	}
+
+	FieldSetModel struct {
+		Legend string           `json:"legend"`
+		Inputs []FormInputModel `json:"inputs"`
+	}
+
 	CreateFormModel struct {
 		// Name is the user friendly name of the form
 		Name string `json:"name"`
+		// Active is the flag for whether the form is usable or not
+		Active bool `json:"active"`
+		// Fieldsets is the grouping of inputs on a form
+		Fieldsets []FieldSetModel `json:"fieldsets"`
 	}
 )
 

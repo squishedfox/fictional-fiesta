@@ -25,9 +25,8 @@ func (r *formRepository) CreateForm(model *db.CreateFormModel) (any, error) {
 	}
 	database := r.session.Client().Database("fictional-fiesta", options.Database())
 	collection := database.Collection("forms", options.Collection())
-	document := bson.M{
-		"name": model.Name,
-	}
+
+	document := mapFormModelToDocument(model)
 	result, err := collection.InsertOne(r.context, document)
 	if err != nil {
 		return nil, err
