@@ -11,7 +11,7 @@ var (
 		Description:  "The display text that will be tagged with a label",
 	}
 	FieldSetInputInputConfig = graphql.NewInputObject(graphql.InputObjectConfig{
-		Name: "FieldSetInput",
+		Name: "FieldSetInputInput",
 		Fields: graphql.InputObjectConfigFieldMap{
 			"label": &LabelInputConfig,
 			"type": &graphql.InputObjectFieldConfig{
