@@ -3,12 +3,64 @@ package mongodb
 import (
 	"context"
 	"log"
+	"slices"
 
 	"github.com/squishedfox/fictional-fiesta/db"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
+
+var (
+	validFields = []string{"id", "_id", "name"}
+)
+
+func getFilterFormRequest(req *db.GetFormsModel) bson.D {
+	filter := bson.D{}
+
+	if req == nil {
+		return filter
+	}
+	if len(req.Filters) == 0 {
+		return filter
+	}
+
+	// supported operations https://www.mongodb.com/docs/manual/reference/mql/query-predicates/#std-label-query-predicates-ref
+	for _, operation := range req.Filters {
+		if !slices.Contains(validFields, operation.Field) {
+			continue
+		}
+		var operationKey string
+		switch operation.Operation {
+		case db.EqualsOperation:
+			operationKey = "$eq"
+			break
+		case db.GreaterThanOperation:
+			operationKey = "$gt"
+			break
+		case db.LessThanOperation:
+			operationKey = "$lt"
+			break
+		case db.NotEqualsOperation:
+			operationKey = "$ne"
+			break
+		default:
+			break
+		}
+
+		if len(operationKey) != 0 {
+			filter = append(filter, bson.E{
+				Key: operation.Field,
+				Value: bson.E{
+					Key:   operationKey,
+					Value: operation.Value,
+				},
+			})
+		}
+	}
+
+	return filter
+}
 
 type (
 	formRepository struct {
@@ -50,7 +102,11 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 	// don't need a transaction for read only session
 	database := r.session.Client().Database("fictional-fiesta", options.Database())
 	collection := database.Collection("forms", options.Collection())
-	filter := bson.D{}
+	filter := getFilterFormRequest(model)
+
+	// count filter should not incldue things like limit or skip
+	countFilter := bson.D{}
+	copy(countFilter, filter)
 
 	forms := make([]*db.FormModel, 0)
 	cursor, err := collection.Find(r.context, filter)
@@ -74,7 +130,7 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 		}
 		forms = append(forms, &form)
 	}
-	count, err := collection.CountDocuments(r.context, filter)
+	count, err := collection.CountDocuments(r.context, countFilter)
 	if err != nil {
 		return nil, err
 	}
