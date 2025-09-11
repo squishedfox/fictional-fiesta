@@ -125,8 +125,9 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 			return nil, err
 		}
 		form := db.FormModel{
-			ID:   bsonForm["_id"].(bson.ObjectID).Hex(),
-			Name: bsonForm["name"].(string),
+			ID:        bsonForm["_id"].(bson.ObjectID).Hex(),
+			Name:      bsonForm["name"].(string),
+			Fieldsets: bsonForm["fieldsets"].([]db.FieldSetModel),
 		}
 		forms = append(forms, &form)
 	}

@@ -1,6 +1,8 @@
 package mongodb
 
 import (
+	"log"
+
 	"github.com/squishedfox/fictional-fiesta/db"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -26,12 +28,14 @@ func mapFieldsetModelToDocument(model *db.FieldSetModel) bson.M {
 	}
 	return bson.M{
 		"legend": model.Legend,
-		"inputs": model.Inputs,
+		"inputs": inputs,
 	}
 }
 
 func mapFormModelToDocument(model *db.CreateFormModel) bson.M {
 	fieldsets := []bson.M{}
+
+	log.Println(model.Fieldsets)
 
 	for _, fieldset := range model.Fieldsets {
 		mapped := mapFieldsetModelToDocument(&fieldset)

@@ -15,9 +15,11 @@ type (
 	// FormModel is the singular form object
 	FormModel struct {
 		// ID is the unique identifier of the form
-		ID string
+		ID string `json:"id"`
 		// Name is the user friendly name of the form
-		Name string
+		Name string `json:"name"`
+		// Fieldsets are the collection of naturally grouped input and label fields
+		Fieldsets []FieldSetModel `json:"fieldsets"`
 	}
 
 	// FormsModel is the model returned when there is a search being performed for one or many different forms
