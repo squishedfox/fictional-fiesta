@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -77,6 +78,7 @@ func main() {
 		h.ContextHandler(userContext, w, r)
 	}))
 
+	fmt.Println("Starting to listen on http://localhost:8080/")
 	if err := http.ListenAndServe(":8080", s); err != nil {
 		log.Fatal(err)
 	}
