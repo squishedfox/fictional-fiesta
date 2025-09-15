@@ -108,8 +108,9 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 	countFilter := bson.D{}
 	copy(countFilter, filter)
 
+	opts := options.Find().SetLimit(model.Limit).SetSkip(model.Skip)
 	forms := make([]*db.FormModel, 0)
-	cursor, err := collection.Find(r.context, filter)
+	cursor, err := collection.Find(r.context, filter, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -125,9 +126,8 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 			return nil, err
 		}
 		form := db.FormModel{
-			ID:        bsonForm["_id"].(bson.ObjectID).Hex(),
-			Name:      bsonForm["name"].(string),
-			Fieldsets: bsonForm["fieldsets"].([]db.FieldSetModel),
+			ID:   bsonForm["_id"].(bson.ObjectID).Hex(),
+			Name: bsonForm["name"].(string),
 		}
 		forms = append(forms, &form)
 	}
