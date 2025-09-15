@@ -8,46 +8,6 @@ import (
 	"github.com/squishedfox/fictional-fiesta/db"
 )
 
-func getIntOrDefault(raw any, defaultValue int) int {
-	val, ok := raw.(int)
-	if !ok {
-		return defaultValue
-	}
-
-	return val
-}
-
-func getIntPointerOrDefault(raw any, defaultValue *int) *int {
-	intVal, ok := raw.(int)
-	if !ok {
-		ptrInt, ok := raw.(*int)
-		if !ok {
-			return defaultValue
-		}
-		return ptrInt
-	}
-
-	return &intVal
-}
-
-func getStringOrDefault(raw any, defaultValue string) string {
-	val, ok := raw.(string)
-	if !ok {
-		return defaultValue
-	}
-
-	return val
-}
-
-func getBoolOrDefault(raw any, defaultValue bool) bool {
-	val, ok := raw.(bool)
-	if !ok {
-		return defaultValue
-	}
-
-	return val
-}
-
 func mapFieldSetInput(raw map[string]any) (db.FormInputModel, error) {
 	inputModel := db.FormInputModel{}
 

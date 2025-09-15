@@ -1,10 +1,7 @@
 package graph
 
 import (
-	"errors"
-
 	"github.com/graphql-go/graphql"
-	"github.com/squishedfox/fictional-fiesta/db"
 )
 
 var (
@@ -43,21 +40,7 @@ var (
 						Type:         graphql.Int,
 					},
 				},
-				Resolve: func(p graphql.ResolveParams) (any, error) {
-					repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)
-					if repository == nil {
-						return nil, errors.New("Could not fetch repository from user context")
-					}
-
-					result, err := repository.GetForms(&db.GetFormsModel{})
-					if err != nil {
-						return nil, err
-					}
-					return &struct {
-						Results []*db.FormModel `json:"results"`
-						Count   int64           `json:"count"`
-					}{result.Forms, result.Count}, nil
-				},
+				Resolve: formListResolver,
 			},
 		},
 	})
