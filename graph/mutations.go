@@ -13,6 +13,7 @@ func mapFieldSetInput(raw map[string]any) (db.FormInputModel, error) {
 	for key, value := range raw {
 		switch key {
 		case "label":
+			inputModel.Label = ""
 			break
 		case "type":
 			inputModel.Type = getStringOrDefault(value, "")
