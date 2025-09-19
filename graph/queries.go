@@ -22,11 +22,11 @@ var (
 				}),
 				Args: graphql.FieldConfigArgument{
 					"id": &graphql.ArgumentConfig{
-						DefaultValue: "",
+						DefaultValue: nil,
 						Type:         graphql.String,
 					},
 					"name": &graphql.ArgumentConfig{
-						DefaultValue: "",
+						DefaultValue: nil,
 						Type:         graphql.String,
 					},
 					"limit": &graphql.ArgumentConfig{
