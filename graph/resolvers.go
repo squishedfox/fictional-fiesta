@@ -45,3 +45,32 @@ func formListResolver(p graphql.ResolveParams) (any, error) {
 		result.Count,
 	}, nil
 }
+
+func createFormResolver(p graphql.ResolveParams) (any, error) {
+	name := p.Args["name"].(string)
+	repository := p.Context.Value(db.FormsRepositoryContextKey).(db.FormsRepository)
+	if repository == nil {
+		return nil, errors.New("Could not fetch repository from user context")
+	}
+
+	fieldsetMap, ok := p.Args["fieldsets"].([]any)
+	if !ok {
+		return nil, errors.New("Invalid type for fieldsets")
+	}
+	fieldsets, err := convertArgsToFieldsets(fieldsetMap)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := repository.CreateForm(&db.CreateFormModel{
+		Name:      name,
+		Fieldsets: fieldsets,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &struct {
+		ID any `json:"id"`
+	}{id}, err
+}
