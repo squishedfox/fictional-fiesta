@@ -16,15 +16,11 @@ var (
 )
 
 func getFilterFormRequest(req *db.GetFormsModel) bson.D {
-	filter := bson.D{}
-
-	if req == nil {
-		return filter
-	}
-	if len(req.Filters) == 0 {
-		return filter
+	if req == nil || len(req.Filters) == 0 {
+		return bson.D{}
 	}
 
+	filter := bson.A{}
 	// supported operations https://www.mongodb.com/docs/manual/reference/mql/query-predicates/#std-label-query-predicates-ref
 	for _, operation := range req.Filters {
 		if !slices.Contains(validFields, operation.Field) {
@@ -49,17 +45,14 @@ func getFilterFormRequest(req *db.GetFormsModel) bson.D {
 		}
 
 		if len(operationKey) != 0 {
-			filter = append(filter, bson.E{
-				Key: operation.Field,
-				Value: bson.E{
-					Key:   operationKey,
-					Value: operation.Value,
-				},
-			})
+			filter = append(filter, bson.D{{
+				operation.Field,
+				bson.D{{operationKey, operation.Value}},
+			}})
 		}
 	}
 
-	return filter
+	return bson.D{{"$and", filter}}
 }
 
 type (
@@ -104,10 +97,6 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 	collection := database.Collection("forms", options.Collection())
 	filter := getFilterFormRequest(model)
 
-	// count filter should not incldue things like limit or skip
-	countFilter := bson.D{}
-	copy(countFilter, filter)
-
 	opts := options.Find().SetLimit(model.Limit).SetSkip(model.Skip)
 	forms := make([]*db.FormModel, 0)
 	cursor, err := collection.Find(r.context, filter, opts)
@@ -131,7 +120,7 @@ func (r *formRepository) GetForms(model *db.GetFormsModel) (*db.FormsModel, erro
 		}
 		forms = append(forms, &form)
 	}
-	count, err := collection.CountDocuments(r.context, countFilter)
+	count, err := collection.CountDocuments(r.context, filter)
 	if err != nil {
 		return nil, err
 	}
