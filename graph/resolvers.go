@@ -11,6 +11,7 @@ func getFormsModel(args map[string]any) db.GetFormsModel {
 	limit := getIntOrDefault(args["limit"], DEFAULT_LIMIT_VALUE)
 	page := getIntOrDefault(args["page"], DEFAULT_PAGE_VALUE)
 	skip := limit * page
+
 	filters := []*db.SearchFieldFilter{}
 	if name, ok := args["name"]; ok {
 		filters = append(filters, &db.SearchFieldFilter{
