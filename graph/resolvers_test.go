@@ -1,9 +1,11 @@
 package graph
 
 import (
+	"context"
 	"slices"
 	"testing"
 
+	"github.com/graphql-go/graphql"
 	"github.com/squishedfox/fictional-fiesta/db"
 	"gotest.tools/v3/assert"
 )
@@ -64,5 +66,39 @@ func TestGetFormsModel(t *testing.T) {
 			return filter.Field == "name"
 		})
 		assert.Assert(tt, containsfieldFilter == true, "Expected filters to contain name field but did not")
+	})
+}
+
+func TestCreateFormResolver(t *testing.T) {
+	t.Run("createFormResolver should return error when repsitory is nil", func(tt *testing.T) {
+		// arrange
+		resolveParams := graphql.ResolveParams{
+			Source:  nil,
+			Args:    map[string]any{},
+			Context: context.TODO(),
+		}
+
+		// act
+		res, err := createFormResolver(resolveParams)
+
+		// assert
+		assert.Assert(tt, err != nil, "Error expected to be nil but got %s", err)
+		assert.Assert(tt, res == nil, "Expect response to be nil but got %v", res)
+	})
+
+	t.Run("createFormResolver should return error when repsitory ", func(tt *testing.T) {
+		// arrange
+		resolveParams := graphql.ResolveParams{
+			Source:  nil,
+			Args:    map[string]any{},
+			Context: context.TODO(),
+		}
+
+		// act
+		res, err := createFormResolver(resolveParams)
+
+		// assert
+		assert.Assert(tt, err != nil, "Error expected to be nil but got %s", err)
+		assert.Assert(tt, res == nil, "Expect response to be nil but got %v", res)
 	})
 }
