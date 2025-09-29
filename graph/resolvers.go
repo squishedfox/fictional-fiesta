@@ -69,7 +69,7 @@ func convertArgsToFieldsets(arg any) ([]db.FieldSetModel, error) {
 
 		rawInputs, ok := m["inputs"].([]any)
 		if !ok {
-			return nil, fmt.Errorf("Error trying to convert input %v to be a map[string]interface{}", m["inputs"])
+			return nil, fmt.Errorf("Error trying to convert input %v to be an array type of any", m["inputs"])
 		}
 		inputList := []db.FormInputModel{}
 		for _, rawInput := range rawInputs {
