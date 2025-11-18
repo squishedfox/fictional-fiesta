@@ -30,18 +30,13 @@ func getFilterFormRequest(req *db.GetFormsModel) bson.D {
 		switch operation.Operation {
 		case db.EqualsOperation:
 			operationKey = "$eq"
-			break
 		case db.GreaterThanOperation:
 			operationKey = "$gt"
-			break
 		case db.LessThanOperation:
 			operationKey = "$lt"
-			break
 		case db.NotEqualsOperation:
 			operationKey = "$ne"
-			break
 		default:
-			break
 		}
 
 		if len(operationKey) != 0 {
